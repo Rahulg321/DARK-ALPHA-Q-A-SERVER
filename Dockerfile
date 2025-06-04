@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 8080
 
 # Start the server using Bun
-CMD ["bun", "index.ts"]
+CMD ["bun", "server/index.ts"]
