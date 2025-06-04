@@ -29,6 +29,9 @@ app.get("/register", (req, res) => {
   res.send("register");
 });
 
-app.listen(8080, () => {
-  console.log("Server is running on port 8080");
+const port = process.env.PORT || 8080;
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+  console.log(process.env.PORT);
 });
