@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors"; // Even this could be temporarily removed for absolute minimal test
+import { openaiProvider } from "./lib/providers";
+import { generateText } from "ai";
 
 const app = express();
 
@@ -12,6 +14,28 @@ app.get("/", (req, res) => {
 
 app.get("/health", (req, res) => {
   res.json({ status: "healthy", timestamp: new Date().toISOString() });
+});
+
+app.get("/login", (req, res) => {
+  res.send("login");
+});
+
+app.get("/register", (req, res) => {
+  res.send("register");
+});
+
+app.get("/response", async (req, res) => {
+  const result = await generateText({
+    model: openaiProvider("gpt-4o-mini"),
+    prompt: "When is the AI Engineer summit?",
+  });
+
+  res.json({
+    message: "Response received",
+    data: result.text,
+    apiKey: process.env.AI_API_KEY,
+    timestamp: new Date().toISOString(),
+  });
 });
 
 app.get("/api/version", (req, res) => {
