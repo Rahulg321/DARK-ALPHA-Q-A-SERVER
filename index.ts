@@ -1,7 +1,5 @@
 import express from "express";
-import cors from "cors";
-import { openaiProvider } from "./lib/providers";
-import { generateText } from "ai";
+import cors from "cors"; // Even this could be temporarily removed for absolute minimal test
 
 const app = express();
 
@@ -12,26 +10,9 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.get("/response", async (req, res) => {
-  const result = await generateText({
-    model: openaiProvider("gpt-4o-mini"),
-    prompt: "When is the AI Engineer summit?",
-  });
-  console.log(result.text);
-  res.send(result.text);
-});
-
-app.get("/login", (req, res) => {
-  res.send("login");
-});
-
-app.get("/register", (req, res) => {
-  res.send("register");
-});
-
 const port = parseInt(process.env.PORT || "8080");
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server is running on port ${port}`);
-  console.log(process.env.PORT);
+  console.log(`PORT env var: ${process.env.PORT}`); // Add this for explicit check
 });
