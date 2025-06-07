@@ -5,6 +5,12 @@ import OpenAI from "openai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { GoogleGenAI } from "@google/genai";
 
+import { createPerplexity } from "@ai-sdk/perplexity";
+
+export const perplexityProvider = createPerplexity({
+  apiKey: process.env.PERPLEXITY_AI_API_KEY ?? "",
+});
+
 export const googleGenAIProvider = new GoogleGenAI({
   apiKey: process.env.GOOGLE_GEMINI_AI_KEY,
 });
