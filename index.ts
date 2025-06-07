@@ -1,61 +1,45 @@
 import express from "express";
 import cors from "cors"; // Even this could be temporarily removed for absolute minimal test
-import { openaiProvider } from "./lib/providers";
+import { openaiProvider } from "./lib/ai/providers";
 import { generateText } from "ai";
+import generateSearchQueries from "./lib/ai/ai-calls/generate-search-queries";
+import { searchAndProcess } from "./lib/ai/ai-calls/search-process";
+import { generateLearnings } from "./lib/ai/ai-calls/generate-learnings";
+import { deepResearch } from "./lib/ai/ai-calls/deep-research";
+import { generateReport } from "./lib/ai/ai-calls/generate-report";
+import fs from "fs";
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
+app.post("/deep-research", async (req, res) => {
+  const { prompt } = req.body;
 
-app.get("/health", (req, res) => {
-  res.json({ status: "healthy", timestamp: new Date().toISOString() });
-});
+  if (!prompt) {
+    res.status(400).json({ error: "Query is required" });
+  }
 
-app.get("/login", (req, res) => {
-  res.send("login");
-});
+  if (typeof prompt !== "string") {
+    res.status(400).json({ error: "Query must be a string" });
+  }
 
-app.get("/register", (req, res) => {
-  res.send("register");
-});
+  if (prompt.length < 10) {
+    res.status(400).json({ error: "Query must be at least 10 characters" });
+  }
 
-app.get("/response", async (req, res) => {
-  const result = await generateText({
-    model: openaiProvider("gpt-4o-mini"),
-    prompt: "When is the AI Engineer summit?",
-  });
+  console.log("query recieved", prompt);
 
-  res.json({
-    message: "Response received",
-    data: result.text,
-    apiKey: process.env.AI_API_KEY,
-    timestamp: new Date().toISOString(),
-  });
-});
+  console.log("generating search");
+  const research = await deepResearch(prompt);
+  console.log("research completed");
 
-app.get("/api/version", (req, res) => {
-  res.json({ version: "1.0.0", environment: process.env.NODE_ENV });
-});
-
-app.post("/api/echo", (req, res) => {
-  res.json({
-    message: "Echo received",
-    data: req.body,
-    timestamp: new Date().toISOString(),
-  });
-});
-
-app.get("/api/status", (req, res) => {
-  res.json({
-    uptime: process.uptime(),
-    memory: process.memoryUsage(),
-    env: process.env.NODE_ENV,
-  });
+  console.log("generating report");
+  const report = await generateReport(research);
+  console.log("report generated");
+  fs.writeFileSync("report.md", report);
+  res.json({ research, report });
 });
 
 const port = parseInt(process.env.PORT || "8080");

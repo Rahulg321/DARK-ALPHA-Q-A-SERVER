@@ -1,8 +1,4 @@
-import {
-  customProvider,
-  extractReasoningMiddleware,
-  wrapLanguageModel,
-} from "ai";
+import Exa from "exa-js";
 
 import { createOpenAI } from "@ai-sdk/openai";
 import OpenAI from "openai";
@@ -12,6 +8,8 @@ import { GoogleGenAI } from "@google/genai";
 export const googleGenAIProvider = new GoogleGenAI({
   apiKey: process.env.GOOGLE_GEMINI_AI_KEY,
 });
+
+export const exaProvider = new Exa(process.env.EXA_AI_API_KEY);
 
 export const googleProvider = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_GEMINI_AI_KEY,
