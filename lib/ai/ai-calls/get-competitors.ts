@@ -24,7 +24,7 @@ For each competitor, provide a brief description of their product, a link to the
 };
 
 /**
- * Fetch competitors from the web
+ * Fetch competitors from the web using exa search
  * @param company - The company to fetch competitors for
  * @param n - The number of competitors to fetch
  * @returns The competitors

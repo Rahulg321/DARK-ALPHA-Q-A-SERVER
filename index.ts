@@ -1,104 +1,21 @@
 import express from "express";
-import cors from "cors"; // Even this could be temporarily removed for absolute minimal test
-import { openaiProvider } from "./lib/ai/providers";
-import { generateText, streamText } from "ai";
-import generateSearchQueries from "./lib/ai/ai-calls/generate-search-queries";
-import { searchAndProcess } from "./lib/ai/ai-calls/search-process";
-import { generateLearnings } from "./lib/ai/ai-calls/generate-learnings";
-import { deepResearch } from "./lib/ai/ai-calls/deep-research";
-import { generateReport } from "./lib/ai/ai-calls/generate-report";
-import fs from "fs";
-import { openai } from "@ai-sdk/openai";
-import { getCompanyInfoTool } from "./lib/ai/tools/get-company-info-tool";
-import { getCompetitorsTool } from "./lib/ai/tools/get-competitors-tool";
-import { getPersonInfoTool } from "./lib/ai/tools/get-person-info-tool";
-import { assessFounderMarketfitTool } from "./lib/ai/tools/assess-founder-marketfit-tool";
-import { getFinancialInformationTool } from "./lib/ai/tools/get-financial-information-tool";
-import { generatePitchTool } from "./lib/ai/tools/generate-pitch-tool";
+import cors from "cors";
+import compareRouter from "./routes/compare";
+import deepResearchRouter from "./routes/deep-research";
+import companyDeepResearchRouter from "./routes/company-deep-research";
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-app.post("/company-deep-research", async (req, res) => {
-  const { prompt } = req.body;
-
-  if (!prompt) {
-    res.status(400).json({ error: "Prompt is required" });
-  }
-
-  if (typeof prompt !== "string") {
-    res.status(400).json({ error: "Prompt must be a string" });
-  }
-
-  if (prompt.length < 10) {
-    res.status(400).json({ error: "Prompt must be at least 10 characters" });
-  }
-
-  console.log("query recieved", prompt);
-
-  const { fullStream } = await streamText({
-    model: openaiProvider("gpt-4o"),
-    prompt,
-    maxSteps: 10,
-    tools: {
-      getCompanyInfo: getCompanyInfoTool,
-      getCompetitors: getCompetitorsTool,
-      getPersonInfo: getPersonInfoTool,
-      assessFounderMarketfit: assessFounderMarketfitTool,
-      getFinancialInformation: getFinancialInformationTool,
-      generatePitch: generatePitchTool,
-    },
-  });
-  for await (const delta of fullStream) {
-    if (delta.type === "tool-call") {
-      console.log(delta);
-    }
-    if (delta.type === "tool-result") {
-      if (delta.toolName === "generatePitch") {
-        console.log(delta.result);
-      } else {
-        console.log(delta.result);
-      }
-    }
-    if (delta.type === "text-delta") {
-      process.stdout.write(delta.textDelta);
-    }
-  }
-});
-
-app.post("/deep-research", async (req, res) => {
-  const { prompt } = req.body;
-
-  if (!prompt) {
-    res.status(400).json({ error: "Prompt is required" });
-  }
-
-  if (typeof prompt !== "string") {
-    res.status(400).json({ error: "Prompt must be a string" });
-  }
-
-  if (prompt.length < 10) {
-    res.status(400).json({ error: "Prompt must be at least 10 characters" });
-  }
-
-  console.log("query recieved", prompt);
-
-  console.log("generating search");
-  const research = await deepResearch(prompt);
-  console.log("research completed");
-
-  console.log("generating report");
-  const report = await generateReport(research);
-  console.log("report generated");
-  fs.writeFileSync("report.md", report);
-  res.json({ research, report });
-});
+app.use("/compare", compareRouter);
+app.use("/deep-research", deepResearchRouter);
+app.use("/company-deep-research", companyDeepResearchRouter);
 
 const port = parseInt(process.env.PORT || "8080");
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server is running on port ${port}`);
-  console.log(`PORT env var: ${process.env.PORT}`); // Add this for explicit check
+  console.log(`PORT env var: ${process.env.PORT}`);
 });
