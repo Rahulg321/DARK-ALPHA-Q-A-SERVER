@@ -8,10 +8,11 @@ import { assessFounderMarketfitTool } from "../lib/ai/tools/assess-founder-marke
 import { getFinancialInformationTool } from "../lib/ai/tools/get-financial-information-tool";
 import { generatePitchTool } from "../lib/ai/tools/generate-pitch-tool";
 import { openaiProvider } from "../lib/ai/providers";
+import authenticateToken from "../middleware/authenticate-token";
 
 const router = Router();
 
-router.post("/", async (req, res) => {
+router.post("/", authenticateToken, async (req, res) => {
   const { prompt } = req.body;
 
   if (!prompt) {
@@ -41,6 +42,7 @@ router.post("/", async (req, res) => {
       generatePitch: generatePitchTool,
     },
   });
+
   for await (const delta of fullStream) {
     if (delta.type === "tool-call") {
       console.log(delta);

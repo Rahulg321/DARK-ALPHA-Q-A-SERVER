@@ -21,11 +21,6 @@ export const googleProvider = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_GEMINI_AI_KEY,
 });
 
-const openai = createOpenAI({
-  apiKey: process.env.AI_API_KEY,
-  compatibility: "strict",
-});
-
 export const openaiProvider = createOpenAI({
   apiKey: process.env.AI_API_KEY,
   compatibility: "strict",

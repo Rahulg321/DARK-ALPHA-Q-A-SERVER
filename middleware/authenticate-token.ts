@@ -16,12 +16,9 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
     return;
   }
 
-  console.log("token", token);
-
   try {
     const decoded = jwt.verify(token, process.env.AUTH_SECRET as string);
     (req as any).user = decoded;
-    console.log("success");
 
     next();
   } catch (error) {
@@ -29,7 +26,6 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
       res.status(401).json({ message: "invalid token" });
       return;
     }
-
     res.status(500).json({ message: "Internal server error" });
     return;
   }

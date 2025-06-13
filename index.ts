@@ -3,6 +3,7 @@ import cors from "cors";
 import compareRouter from "./routes/compare";
 import deepResearchRouter from "./routes/deep-research";
 import companyDeepResearchRouter from "./routes/company-deep-research";
+import resourceSearchRouter from "./routes/resource-search";
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(cors());
 app.use("/compare", compareRouter);
 app.use("/deep-research", deepResearchRouter);
 app.use("/company-deep-research", companyDeepResearchRouter);
+app.use("/resource-search", resourceSearchRouter);
 
 const port = parseInt(process.env.PORT || "8080");
 
