@@ -10,7 +10,7 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
   const { prompt } = req.body;
 
   if (!prompt) {
-    res.status(400).json({ error: "Prompt is required" });
+    res.status(400).json({ message: "Prompt is required" });
   }
 
   console.log("prompt", prompt);
@@ -65,7 +65,9 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
     res.end();
   } catch (error) {
     console.error("Error processing stream", error);
-    res.status(500).json({ error: "Error processing stream" });
+    res.status(500).json({
+      message: error instanceof Error ? error.message : "Internal server error",
+    });
   }
 });
 

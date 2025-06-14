@@ -23,10 +23,17 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
     next();
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
-      res.status(401).json({ message: "invalid token" });
+      console.log("An error occurred trying to authenticate token", error);
+      res.status(401).json({ message: error.message });
       return;
     }
-    res.status(500).json({ message: "Internal server error" });
+    console.log("An error occurred trying to authenticate token", error);
+    res
+      .status(500)
+      .json({
+        message:
+          error instanceof Error ? error.message : "Internal server error",
+      });
     return;
   }
 };
