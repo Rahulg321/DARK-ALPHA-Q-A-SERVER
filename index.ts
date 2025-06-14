@@ -13,9 +13,16 @@ app.use(express.json());
 app.use(cors());
 
 app.get("/", async (req, res) => {
-  const questions = await db.select().from(comparisonQuestions);
-  console.log("questions", questions);
-  res.send(JSON.stringify(questions));
+  try {
+    const questions = await db.select().from(comparisonQuestions);
+    console.log("questions", questions);
+    res.send(JSON.stringify(questions));
+  } catch (error) {
+    console.log("An error occurred trying to get questions", error);
+    res.status(500).json({
+      message: error instanceof Error ? error.message : "Internal server error",
+    });
+  }
 });
 
 app.use("/compare", compareRouter);
