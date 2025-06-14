@@ -4,14 +4,18 @@ import compareRouter from "./routes/compare";
 import deepResearchRouter from "./routes/deep-research";
 import companyDeepResearchRouter from "./routes/company-deep-research";
 import resourceSearchRouter from "./routes/resource-search";
+import { db } from "./lib/db/queries";
+import { comparisonQuestions } from "./lib/db/schema";
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (req, res) => {
-  res.send("Hello World from the initial request");
+app.get("/", async (req, res) => {
+  const questions = await db.select().from(comparisonQuestions);
+  console.log("questions", questions);
+  res.send(JSON.stringify(questions));
 });
 
 app.use("/compare", compareRouter);
