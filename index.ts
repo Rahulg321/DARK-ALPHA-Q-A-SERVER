@@ -10,6 +10,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.get("/", (req, res) => {
+  res.send("Hello World from the initial request");
+});
+
 app.use("/compare", compareRouter);
 app.use("/deep-research", deepResearchRouter);
 app.use("/company-deep-research", companyDeepResearchRouter);
