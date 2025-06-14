@@ -36,17 +36,23 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
         case "text-delta": {
           console.log("text-delta", part.textDelta);
           res.write(part.textDelta);
+          // @ts-ignore: flush is available when using streaming in Express
+          res.flush?.();
           break;
         }
         case "reasoning": {
           console.log("reasoning", part.textDelta);
           res.write(part.textDelta);
+          // @ts-ignore: flush is available when using streaming in Express
+          res.flush?.();
           break;
         }
 
         case "tool-call": {
           console.log("tool-call", part.toolName);
           res.write(part.toolName);
+          // @ts-ignore: flush is available when using streaming in Express
+          res.flush?.();
           break;
         }
         // case "tool-result": {
@@ -54,6 +60,8 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
         //     case "compareResource": {
         //       console.log("tool-result", part.result);
         //       res.write(JSON.stringify(part.result));
+        //       // @ts-ignore: flush is available when using streaming in Express
+        //       res.flush?.();
         //       break;
         //     }
         //   }
