@@ -14,9 +14,11 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
     return;
   }
 
+  console.log("prompt", prompt);
+
   try {
     const result = await generateText({
-      model: openaiProvider("o3-mini"),
+      model: openaiProvider("o3"),
       system:
         "You are a helpful assistant that compares resources from our company knowledge base based on the user's prompt. You will be given a prompt and you will need to compare the resources based on the prompt. Only call the tool if you need to compare the resources and only one not multiple times unnecessarily. Once you get the comparison results back from the tool call, make your complete analysis and return the results in a nice and clean manner",
       maxSteps: 5,
