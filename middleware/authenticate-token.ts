@@ -22,18 +22,15 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
 
     next();
   } catch (error) {
+    console.log("An error occurred trying to authenticate token", error);
     if (error instanceof jwt.JsonWebTokenError) {
       console.log("An error occurred trying to authenticate token", error);
       res.status(401).json({ message: error.message });
       return;
     }
-    console.log("An error occurred trying to authenticate token", error);
-    res
-      .status(500)
-      .json({
-        message:
-          error instanceof Error ? error.message : "Internal server error",
-      });
+    res.status(500).json({
+      message: error instanceof Error ? error.message : "Internal server error",
+    });
     return;
   }
 };
