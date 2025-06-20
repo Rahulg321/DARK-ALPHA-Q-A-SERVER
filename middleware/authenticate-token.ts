@@ -2,6 +2,10 @@ import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
+  console.log("inside authenticate token");
+
+  console.log("req.headers", req.headers);
+
   const authHeader = req.headers["authorization"];
 
   if (!authHeader) {
