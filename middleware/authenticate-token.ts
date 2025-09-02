@@ -2,13 +2,10 @@ import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-  console.log("inside authenticate token");
-
-  console.log("req.headers", req.headers);
-
   const authHeader = req.headers["authorization"];
 
   if (!authHeader) {
+    console.log("auth header is not found");
     res.status(401).json({ message: "Not Authenticated" });
     return;
   }
@@ -16,6 +13,7 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   const token = authHeader.split(" ")[1];
 
   if (!token) {
+    console.log("acces token is not found");
     res.status(401).json({ message: "Authorization token is missing" });
     return;
   }
