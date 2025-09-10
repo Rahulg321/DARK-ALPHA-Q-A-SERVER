@@ -2,6 +2,7 @@ import generateSearchQueries from "./generate-search-queries";
 import { searchAndProcess } from "./search-process";
 import { generateLearnings } from "./generate-learnings";
 import { accumulatedResearch } from "../../types";
+import { enhancedServerRAGSearch, addToResearchContext } from "../enhanced-server-rag";
 
 /**
  * Deep research into a given prompt.
@@ -18,6 +19,18 @@ export const deepResearch = async (
   if (!accumulatedResearch.query) {
     accumulatedResearch.query = prompt;
   }
+  
+  // Use enhanced RAG to check existing context first
+  console.log("Checking existing research context before generating new queries...");
+  const existingContext = await enhancedServerRAGSearch(prompt, {
+    includeAccumulatedResearch: true,
+    maxResults: 10,
+  });
+  
+  if (existingContext.searchResults.length > 0) {
+    console.log(`Found ${existingContext.searchResults.length} relevant items in existing research context`);
+  }
+  
   const queries = await generateSearchQueries(prompt);
 
   accumulatedResearch.queries = queries;
